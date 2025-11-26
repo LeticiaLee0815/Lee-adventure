@@ -6,7 +6,7 @@
     <title>Lee's Adventure</title>
     <style>
         :root {
-            /* --- V12.2 PNG修復版 --- */
+            /* --- V13.0 終極內嵌版 --- */
             --card-bg: rgba(255, 255, 255, 0.55);
             --card-border: rgba(255, 240, 200, 0.8);
             --primary: #007AFF; 
@@ -74,22 +74,24 @@
         }
         .header p { font-size: 14px; color: var(--text-sub); margin: 0; font-weight: 500; letter-spacing: 0.5px; }
 
-        /* Q版人物樣式修正 */
-        .avatar-container {
+        /* Q版人物容器 */
+        .avatar-box {
             width: 85px; height: 85px; 
             border-radius: 50%;
             overflow: hidden;
             border: 4px solid rgba(255, 255, 255, 0.9);
             box-shadow: 0 8px 20px rgba(90, 70, 50, 0.15);
             margin-bottom: 5px;
-            background-color: #fff; 
+            background-color: #fff; /* 白底 */
             transition: transform 0.3s;
             display: flex; justify-content: center; align-items: center;
         }
-        .widget:hover .avatar-container { transform: scale(1.05) rotate(3deg); }
-        .avatar-container img { width: 100%; height: 100%; object-fit: cover; }
+        .widget:hover .avatar-box { transform: scale(1.05) rotate(3deg); }
+        
+        /* 內嵌 SVG 樣式 */
+        .avatar-svg { width: 100%; height: 100%; }
 
-        /* Widget 卡片調整 */
+        /* Widget 卡片 */
         .widget-row { display: flex; justify-content: center; width: 100%; gap: 20px; }
         .widget {
             background: var(--card-bg);
@@ -159,8 +161,18 @@
 
         <div class="widget-row">
             <div class="widget w-served">
-                <div class="avatar-container">
-                    <img src="https://api.dicebear.com/9.x/avataaars/png?seed=MilitaryLee&accessories=prescription02&skinColor=f5d0c5&topType=winterHat4&clotheType=graphicShirt&clotheColor=5c6b46&graphicType=diamond" class="widget-q-icon" alt="Military Q-Version">
+                <div class="avatar-box">
+                    <svg class="avatar-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="55" r="35" fill="#f5d0c5"/>
+                        <path d="M15 35 L85 35 L80 15 L20 15 Z" fill="#5c6b46"/>
+                        <path d="M10 35 Q50 45 90 35" fill="none" stroke="#5c6b46" stroke-width="5"/>
+                        <circle cx="35" cy="55" r="3" fill="#333"/>
+                        <circle cx="65" cy="55" r="3" fill="#333"/>
+                        <circle cx="35" cy="55" r="10" fill="none" stroke="#333" stroke-width="2"/>
+                        <circle cx="65" cy="55" r="10" fill="none" stroke="#333" stroke-width="2"/>
+                        <line x1="45" y1="55" x2="55" y2="55" stroke="#333" stroke-width="2"/>
+                        <path d="M40 70 Q50 75 60 70" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
                 </div>
                 <div class="widget-number" id="num-served">0</div>
                 <div class="widget-label">Days Served</div>
@@ -184,8 +196,16 @@
 
         <div class="widget-row">
             <div class="widget w-left">
-                 <div class="avatar-container">
-                    <img src="https://api.dicebear.com/9.x/avataaars/png?seed=VacationLee&accessories=sunglasses&skinColor=f5d0c5&topType=hat&clotheType=shirtScoopNeck&clotheColor=ff9f0a&mouth=smile" class="widget-q-icon" alt="Vacation Q-Version">
+                 <div class="avatar-box">
+                    <svg class="avatar-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="55" r="35" fill="#f5d0c5"/>
+                        <path d="M15 35 L85 35 L80 15 L20 15 Z" fill="#ff9f0a"/>
+                        <path d="M10 35 Q50 42 90 35" fill="none" stroke="#ff9f0a" stroke-width="6"/>
+                        <path d="M25 50 L45 50 L45 60 Q35 65 25 60 Z" fill="#222"/>
+                        <path d="M55 50 L75 50 L75 60 Q65 65 55 60 Z" fill="#222"/>
+                        <line x1="45" y1="52" x2="55" y2="52" stroke="#222" stroke-width="2"/>
+                        <path d="M35 72 Q50 85 65 72" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
                 </div>
                 <div class="widget-number" id="num-left" style="color: var(--primary);">0</div>
                 <div class="widget-label">Days Left</div>
@@ -197,7 +217,7 @@
         const config = {
             startDate: "2025-10-21",
             endDate: "2026-01-21",
-            mockCurrentDate: null, // 已設為正式時間
+            mockCurrentDate: null, // 正式時間
             
             memories: [
                 { date: "2025-10-21", title: "入伍第一天", img: "p1.jpg", note: "生日許願，重要的儀式感" },
