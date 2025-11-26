@@ -6,7 +6,7 @@
     <title>Lee's Adventure</title>
     <style>
         :root {
-            /* --- V17.0 最終完美版 --- */
+            /* --- V20.0 甜蜜喊話版 --- */
             --bg-color: #FFFBF0;
             --card-bg: rgba(255, 255, 255, 0.65);
             --card-border: rgba(255, 240, 200, 0.8);
@@ -16,6 +16,9 @@
             --text-sub: #8a7f75;
             --shadow: 0 8px 20px rgba(90, 70, 50, 0.08);
             --glow: 0 0 35px rgba(255, 190, 60, 0.6);
+            --wave-front: #FF9F80; 
+            --wave-mid: #FFC9A0;   
+            --wave-back: #FFEDCC; 
         }
 
         body {
@@ -25,18 +28,8 @@
             min-height: 100vh;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             overflow-x: hidden; position: relative;
-            
-            /* 金色波光背景 */
             background-color: #FFFBF0;
-            background-image: linear-gradient(-45deg, #FFFBF0, #FFEDCC, #FFE0B2, #FFFBE6, #FFD54F);
-            background-size: 400% 400%;
-            animation: shimmeringWave 18s ease infinite; 
-        }
-
-        @keyframes shimmeringWave {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            background-image: radial-gradient(circle at 50% 0%, #FFE0B2 10%, #FFFBF0 65%);
         }
 
         /* 頂層閃爍光點 */
@@ -66,10 +59,12 @@
             box-shadow: var(--shadow); border: 1px solid var(--card-border);
             display: flex; flex-direction: row; align-items: center; gap: 15px;
             position: relative; overflow: hidden; transition: transform 0.3s; min-width: 180px;
+            cursor: pointer;
         }
         .widget:hover { transform: scale(1.03); border-color: var(--accent); }
+        .widget:active { transform: scale(0.95); }
 
-        /* Widget 頭像 (圓形+白邊) */
+        /* Widget 頭像 */
         .widget-head-icon {
             width: 50px; height: 50px; background: white; border-radius: 50%;
             border: 2px solid rgba(255,255,255,0.8); box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -85,12 +80,7 @@
         .timeline-wrapper { width: 100%; position: relative; padding: 60px 0 30px 0; }
         .track-bg { width: 100%; height: 12px; background: rgba(0,0,0,0.05); border-radius: 6px; position: relative; border: 2px solid white;}
         .track-fill { height: 100%; background: linear-gradient(90deg, #FFD700, #FF9F0A); border-radius: 6px; width: 0%; position: relative; transition: width 1s linear; box-shadow: 0 2px 10px rgba(255, 159, 10, 0.4); }
-        
-        /* 跑者 */
-        .runner-box { 
-            position: absolute; right: -40px; top: -75px; width: 80px; height: 80px; z-index: 10; 
-            animation: bobbing 0.8s infinite alternate ease-in-out;
-        }
+        .runner-box { position: absolute; right: -40px; top: -75px; width: 80px; height: 80px; z-index: 10; animation: bobbing 0.8s infinite alternate ease-in-out; }
         @keyframes bobbing { from { transform: translateY(0); } to { transform: translateY(-10px); } }
 
         /* 里程碑 */
@@ -100,7 +90,7 @@
         .milestone.locked::before { content: '🔒'; font-size: 14px; filter: grayscale(1); opacity: 0.6; }
         .milestone:hover::before { transform: scale(1.5) rotate(10deg); }
 
-        /* 氣泡與燈箱 */
+        /* 氣泡 */
         .photo-bubble { position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%) scale(0.8); width: 200px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); padding: 10px; border-radius: 16px; box-shadow: 0 15px 40px rgba(90, 70, 50, 0.15); border: 1px solid white; opacity: 0; visibility: hidden; pointer-events: none; z-index: 100; text-align: center; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .photo-bubble::after { content: ''; position: absolute; bottom: -8px; left: 50%; margin-left: -8px; border-width: 8px 8px 0; border-style: solid; border-color: rgba(255,255,255,0.95) transparent transparent transparent; }
         .milestone:hover .photo-bubble { opacity: 1; visibility: visible; transform: translateX(-50%) scale(1); bottom: 45px; }
@@ -115,35 +105,87 @@
         .close-btn { position: absolute; top: 15px; right: 15px; font-size: 30px; cursor: pointer; color: white; }
         .date-labels { display: flex; justify-content: space-between; margin-top: 10px; font-size: 12px; color: var(--text-sub); font-weight: 600; }
 
-        /* --- 3D 翻轉卡片 (點擊切換版 + 圖片對調) --- */
-        .flip-card-container { position: fixed; bottom: 20px; left: 20px; width: 100px; height: 140px; perspective: 1000px; z-index: 90; }
-        
-        /* 使用 JS class 控制翻轉，修正卡住問題 */
-        .flip-card { 
-            width: 100%; height: 100%; position: relative; 
-            transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
-            transform-style: preserve-3d; cursor: pointer; 
-        }
+        /* 3D 翻轉卡片 */
+        .flip-card-container { position: fixed; bottom: 20px; left: 20px; width: 100px; height: 140px; perspective: 1000px; z-index: 90; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-origin: bottom left; }
+        .flip-card-container:hover { transform: scale(3); }
+        .flip-card { width: 100%; height: 100%; position: relative; transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1); transform-style: preserve-3d; cursor: pointer; }
         .flip-card.flipped { transform: rotateY(180deg); }
-        
-        .flip-card-front, .flip-card-back { 
-            position: absolute; width: 100%; height: 100%; 
-            -webkit-backface-visibility: hidden; backface-visibility: hidden; 
-            border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); 
-            display: flex; align-items: center; justify-content: center; overflow: hidden; 
-            background-color: #FF9F0A; /* 圖片載入前底色 */
-        }
-        
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; overflow: hidden; background-color: #FF9F0A; }
         .flip-card-front { transform: rotateY(0deg); z-index: 2; }
         .flip-card-back { transform: rotateY(180deg); background-color: white; }
-        
-        /* 圖片填滿 */
         .flip-card-front img, .flip-card-back img { width: 100%; height: 100%; object-fit: cover; }
-        
-        @media (max-width: 600px) { .flip-card-container { width: 80px; height: 110px; bottom: 10px; left: 10px; } }
+
+        /* --- 黑膠音樂播放器 (V20.0 大幅放大版) --- */
+        .music-trigger {
+            position: fixed; bottom: 30px; right: 20px;
+            width: 120px; height: 120px;
+            z-index: 80; cursor: pointer;
+            transition: transform 0.3s ease;
+            animation: floating 4s ease-in-out infinite;
+            transform-origin: bottom right; /* 確保放大時往左上長，不會被切掉 */
+        }
+        /* 懸停時放大 1.6 倍 */
+        .music-trigger:hover {
+            animation-play-state: paused;
+            transform: scale(1.6) rotate(0deg) !important; 
+        }
+
+        @keyframes floating { 0% { transform: translateY(0px) rotate(3deg); } 50% { transform: translateY(-15px) rotate(-3deg); } 100% { transform: translateY(0px) rotate(3deg); } }
+        .vinyl-group { transform-origin: 60px 35px; transition: transform 0.5s; }
+        .music-trigger.playing .vinyl-group { animation: spin 3s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .music-label { position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.8); padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; color: var(--primary); white-space: nowrap; pointer-events: none; }
+
+        /* 海浪 */
+        .waves-container { position: fixed; bottom: 0; left: 0; width: 100%; height: 35vh; pointer-events: none; z-index: 0; overflow: hidden; }
+        .waves { position: absolute; bottom: 0; left: 0; width: 200%; height: 100%; }
+        .wave { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; background-repeat: repeat-x; background-position: 0 bottom; }
+        #wave1 { opacity: 0.8; background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1200 150" xmlns="http://www.w3.org/2000/svg"><path d="M0,60 C150,120 350,0 600,60 C850,120 1050,0 1200,60 L1200,150 L0,150 Z" fill="%23FF9F80"/></svg>'); animation: moveWave 12s linear infinite; z-index: 3; }
+        #wave2 { opacity: 0.6; background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1200 150" xmlns="http://www.w3.org/2000/svg"><path d="M0,80 C200,140 400,20 600,80 C800,140 1000,20 1200,80 L1200,150 L0,150 Z" fill="%23FFC9A0"/></svg>'); animation: moveWave 18s linear infinite reverse; z-index: 2; }
+        #wave3 { opacity: 0.4; background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1200 150" xmlns="http://www.w3.org/2000/svg"><path d="M0,100 C250,160 450,40 700,100 C950,160 1150,40 1400,100 L1400,150 L0,150 Z" fill="%23FFEDCC"/></svg>'); animation: moveWave 22s linear infinite; z-index: 1; }
+        @keyframes moveWave { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* 加油打氣彈窗 */
+        .cheer-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 250, 240, 0.85); backdrop-filter: blur(15px); z-index: 5000;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .cheer-overlay.active { opacity: 1; pointer-events: all; }
+        .cheer-box {
+            background: white; padding: 30px; border-radius: 30px;
+            max-width: 80%; text-align: center;
+            box-shadow: 0 20px 60px rgba(255, 160, 50, 0.3);
+            border: 4px solid #FFF8E0;
+            transform: scale(0.8); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .cheer-overlay.active .cheer-box { transform: scale(1); }
+        .cheer-img { 
+            width: 150px; height: 150px; object-fit: cover; 
+            border-radius: 50%; margin-bottom: 15px;
+            border: 5px solid #FF9F0A; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .cheer-text { font-size: 18px; font-weight: bold; color: #2c1e10; line-height: 1.5; }
+        .cheer-close { margin-top: 20px; font-size: 14px; color: #8a7f75; opacity: 0.7; }
+        .confetti { position: absolute; width: 10px; height: 10px; background-color: #f00; animation: fall linear forwards; }
+        @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
+
+        @media (max-width: 600px) { 
+            .flip-card-container { width: 80px; height: 110px; bottom: 10px; left: 10px; } 
+            .music-trigger { width: 100px; height: 100px; bottom: 20px; right: 10px; }
+        }
     </style>
 </head>
 <body>
+
+    <div id="cheer-overlay" class="cheer-overlay" onclick="closeCheer()">
+        <div class="cheer-box" onclick="event.stopPropagation()">
+            <img id="cheer-img" class="cheer-img" src="" alt="Cheer Up">
+            <div id="cheer-text" class="cheer-text"></div>
+            <div class="cheer-close">Tap anywhere to close</div>
+        </div>
+    </div>
 
     <audio id="bg-music" loop>
         <source src="love-song.mp3" type="audio/mpeg">
@@ -158,26 +200,60 @@
         </div>
     </div>
 
+    <div class="waves-container">
+        <div class="waves">
+            <div class="wave" id="wave1"></div>
+            <div class="wave" id="wave2"></div>
+            <div class="wave" id="wave3"></div>
+        </div>
+    </div>
+
     <div class="flip-card-container">
         <div class="flip-card" onclick="this.classList.toggle('flipped')">
-            <div class="flip-card-front">
-                <img src="card-back.jpg" alt="Front Card">
-            </div>
-            <div class="flip-card-back">
-                <img src="card-front.jpg" alt="Back Card">
-            </div>
+            <div class="flip-card-front"><img src="card-back.jpg" alt="Front"></div>
+            <div class="flip-card-back"><img src="card-front.jpg" alt="Back"></div>
         </div>
+    </div>
+
+    <div class="music-trigger" id="musicBtn" onclick="toggleMusic()">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" filter="drop-shadow(0 5px 10px rgba(0,0,0,0.2))">
+            <g class="vinyl-group">
+                <circle cx="60" cy="35" r="30" fill="#1a1a1a" stroke="#333" stroke-width="1"/>
+                <circle cx="60" cy="35" r="10" fill="#ff3b30"/> 
+                <circle cx="60" cy="35" r="2" fill="#fff"/>   
+                <path d="M60 35 m -20 0 a 20 20 0 1 0 40 0 a 20 20 0 1 0 -40 0" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+            </g>
+            <g transform="translate(0, 10)">
+                <g transform="translate(20, 40) scale(0.6)">
+                    <path d="M38 14 L58 14 L61 26 L35 26 Z" fill="white" stroke="#ccc" stroke-width="2"/> 
+                    <path d="M33 26 Q48 30 63 26" fill="none" stroke="white" stroke-width="4"/>
+                    <circle cx="48" cy="35" r="11" fill="#f5d0c5"/> 
+                    <circle cx="44" cy="36" r="3.5" stroke="#333" stroke-width="1" fill="none"/> 
+                    <circle cx="52" cy="36" r="3.5" stroke="#333" stroke-width="1" fill="none"/>
+                    <path d="M20 50 Q30 20 40 10" fill="none" stroke="#1D1D1F" stroke-width="4" stroke-linecap="round"/> 
+                    <path d="M48 45 L48 70" stroke="#1D1D1F" stroke-width="4"/> 
+                </g>
+                <g transform="translate(60, 40) scale(0.6)">
+                    <path d="M38 14 L58 14 L61 26 L35 26 Z" fill="white" stroke="#ccc" stroke-width="2"/> 
+                    <path d="M33 26 Q48 30 63 26" fill="none" stroke="white" stroke-width="4"/>
+                    <path d="M36 35 Q32 55 36 62 L60 62 Q64 55 60 35" fill="#333"/> 
+                    <circle cx="48" cy="35" r="11" fill="#f5d0c5"/>
+                    <path d="M70 50 Q60 20 50 10" fill="none" stroke="#1D1D1F" stroke-width="4" stroke-linecap="round"/> 
+                    <path d="M48 45 L48 70" stroke="#1D1D1F" stroke-width="4"/> 
+                </g>
+            </g>
+        </svg>
+        <div class="music-label">Tap to Play</div>
     </div>
 
     <div class="container">
         <div class="header">
             <h1>123 Lee's Adventure🫡</h1>
             <p>I luv you, you gut this!</p>
-            <p class="music-hint">🎵 Tap anywhere to start music</p>
         </div>
 
         <div class="widget-row">
-            <div class="widget w-served">
+            <div class="widget w-served" onclick="showCheer('served')">
                 <div class="widget-head-icon">
                     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                         <rect width="100" height="100" fill="#e0f7fa"/>
@@ -235,7 +311,7 @@
         </div>
 
         <div class="widget-row">
-            <div class="widget w-left">
+            <div class="widget w-left" onclick="showCheer('left')">
                 <div class="widget-head-icon">
                     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                         <rect width="100" height="100" fill="#fffbe6"/>
@@ -258,19 +334,61 @@
     </div>
 
     <script>
-        // 音樂播放邏輯
         const bgMusic = document.getElementById('bg-music');
-        let musicStarted = false;
-        function startMusic() {
-            if (!musicStarted) {
+        const musicBtn = document.getElementById('musicBtn');
+        const musicLabel = document.querySelector('.music-label');
+        let isPlaying = false;
+
+        function toggleMusic() {
+            if (isPlaying) {
+                bgMusic.pause();
+                musicBtn.classList.remove('playing');
+                musicLabel.innerText = "Tap to Play";
+                isPlaying = false;
+            } else {
                 bgMusic.play().then(() => {
-                    musicStarted = true;
-                    document.querySelector('.music-hint').style.display = 'none';
-                }).catch(console.log);
+                    musicBtn.classList.add('playing');
+                    musicLabel.innerText = "Playing...";
+                    isPlaying = true;
+                }).catch(err => console.log("Audio play failed:", err));
             }
         }
-        document.addEventListener('click', startMusic);
-        document.addEventListener('touchstart', startMusic);
+
+        function showCheer(type) {
+            const overlay = document.getElementById('cheer-overlay');
+            const img = document.getElementById('cheer-img');
+            const text = document.getElementById('cheer-text');
+            
+            if (type === 'served') {
+                img.src = "cheer-served.jpg"; 
+                img.onerror = function() { this.src = "data:image/svg+xml;utf8,<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='%23e0f7fa'/><circle cx='50' cy='60' r='25' fill='%23f5d0c5'/><path d='M35 26 L61 26 L58 14 L38 14 Z' fill='%23F2F2F7' stroke='%238E8E93' stroke-width='1' transform='scale(1.8) translate(-22, 0)'/><path d='M33 26 Q48 30 63 26' fill='none' stroke='%23F2F2F7' stroke-width='4' transform='scale(1.8) translate(-22, 0)'/><circle cx='40' cy='60' r='8' fill='none' stroke='%23333' stroke-width='2'/><circle cx='60' cy='60' r='8' fill='none' stroke='%23333' stroke-width='2'/><line x1='48' y1='60' x2='52' y2='60' stroke='%23333' stroke-width='2'/><path d='M45 75 Q50 80 55 75' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round'/></svg>"; };
+                text.innerHTML = "報告!我最喜歡你🫡❤️";
+            } else {
+                img.src = "cheer-left.jpg";
+                img.onerror = function() { this.src = "data:image/svg+xml;utf8,<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='%23fffbe6'/><path d='M30 50 Q25 80 35 90 L65 90 Q75 80 70 50' fill='%23333'/><circle cx='50' cy='60' r='25' fill='%23f5d0c5'/><path d='M35 26 L61 26 L58 14 L38 14 Z' fill='%23F2F2F7' stroke='%238E8E93' stroke-width='1' transform='scale(1.8) translate(-22, 0)'/><path d='M33 26 Q48 30 63 26' fill='none' stroke='%23F2F2F7' stroke-width='4' transform='scale(1.8) translate(-22, 0)'/><path d='M35 58 L45 58 L45 65 Q40 68 35 65 Z' fill='%23333'/><path d='M55 58 L65 58 L65 65 Q60 68 55 65 Z' fill='%23333'/><line x1='45' y1='59' x2='55' y2='59' stroke='%23333' stroke-width='2'/><path d='M45 75 Q50 82 55 75' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round'/></svg>"; };
+                text.innerHTML = "123 456 你好棒喔🤩😍";
+            }
+            
+            overlay.classList.add('active');
+            fireConfetti(); 
+        }
+
+        function closeCheer() {
+            document.getElementById('cheer-overlay').classList.remove('active');
+        }
+
+        function fireConfetti() {
+            const colors = ['#FF9F0A', '#007AFF', '#FFD700', '#FF3B30', '#4CD964'];
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 4000);
+            }
+        }
 
         const config = {
             startDate: "2025-10-21",
