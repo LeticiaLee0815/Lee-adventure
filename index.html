@@ -6,7 +6,7 @@
     <title>Lee's Adventure</title>
     <style>
         :root {
-            /* --- V16.7 點擊翻轉優化版 --- */
+            /* --- V17.0 最終完美版 --- */
             --bg-color: #FFFBF0;
             --card-bg: rgba(255, 255, 255, 0.65);
             --card-border: rgba(255, 240, 200, 0.8);
@@ -25,6 +25,8 @@
             min-height: 100vh;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             overflow-x: hidden; position: relative;
+            
+            /* 金色波光背景 */
             background-color: #FFFBF0;
             background-image: linear-gradient(-45deg, #FFFBF0, #FFEDCC, #FFE0B2, #FFFBE6, #FFD54F);
             background-size: 400% 400%;
@@ -37,6 +39,7 @@
             100% { background-position: 0% 50%; }
         }
 
+        /* 頂層閃爍光點 */
         body::after {
             content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: -1;
@@ -53,8 +56,9 @@
         .header { text-align: center; margin-bottom: 10px; }
         .header h1 { font-size: 26px; font-weight: 800; margin: 0 0 5px 0; color: var(--text-main); letter-spacing: -0.5px; text-shadow: 0 2px 15px rgba(255, 200, 100, 0.4); }
         .header p { font-size: 13px; color: var(--text-sub); margin: 0; font-weight: 500; }
+        .music-hint { font-size: 11px; color: var(--accent); margin-top: 5px; opacity: 0.8; }
 
-        /* Widget */
+        /* Widget 卡片 */
         .widget-row { display: flex; justify-content: center; width: 100%; }
         .widget {
             background: var(--card-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
@@ -65,7 +69,7 @@
         }
         .widget:hover { transform: scale(1.03); border-color: var(--accent); }
 
-        /* Widget 頭像 */
+        /* Widget 頭像 (圓形+白邊) */
         .widget-head-icon {
             width: 50px; height: 50px; background: white; border-radius: 50%;
             border: 2px solid rgba(255,255,255,0.8); box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -81,7 +85,12 @@
         .timeline-wrapper { width: 100%; position: relative; padding: 60px 0 30px 0; }
         .track-bg { width: 100%; height: 12px; background: rgba(0,0,0,0.05); border-radius: 6px; position: relative; border: 2px solid white;}
         .track-fill { height: 100%; background: linear-gradient(90deg, #FFD700, #FF9F0A); border-radius: 6px; width: 0%; position: relative; transition: width 1s linear; box-shadow: 0 2px 10px rgba(255, 159, 10, 0.4); }
-        .runner-box { position: absolute; right: -40px; top: -75px; width: 80px; height: 80px; z-index: 10; animation: bobbing 0.8s infinite alternate ease-in-out; }
+        
+        /* 跑者 */
+        .runner-box { 
+            position: absolute; right: -40px; top: -75px; width: 80px; height: 80px; z-index: 10; 
+            animation: bobbing 0.8s infinite alternate ease-in-out;
+        }
         @keyframes bobbing { from { transform: translateY(0); } to { transform: translateY(-10px); } }
 
         /* 里程碑 */
@@ -91,7 +100,7 @@
         .milestone.locked::before { content: '🔒'; font-size: 14px; filter: grayscale(1); opacity: 0.6; }
         .milestone:hover::before { transform: scale(1.5) rotate(10deg); }
 
-        /* 氣泡 */
+        /* 氣泡與燈箱 */
         .photo-bubble { position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%) scale(0.8); width: 200px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); padding: 10px; border-radius: 16px; box-shadow: 0 15px 40px rgba(90, 70, 50, 0.15); border: 1px solid white; opacity: 0; visibility: hidden; pointer-events: none; z-index: 100; text-align: center; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .photo-bubble::after { content: ''; position: absolute; bottom: -8px; left: 50%; margin-left: -8px; border-width: 8px 8px 0; border-style: solid; border-color: rgba(255,255,255,0.95) transparent transparent transparent; }
         .milestone:hover .photo-bubble { opacity: 1; visibility: visible; transform: translateX(-50%) scale(1); bottom: 45px; }
@@ -106,35 +115,39 @@
         .close-btn { position: absolute; top: 15px; right: 15px; font-size: 30px; cursor: pointer; color: white; }
         .date-labels { display: flex; justify-content: space-between; margin-top: 10px; font-size: 12px; color: var(--text-sub); font-weight: 600; }
 
-        /* --- 3D 翻轉卡片 (點擊版) --- */
+        /* --- 3D 翻轉卡片 (點擊切換版 + 圖片對調) --- */
         .flip-card-container { position: fixed; bottom: 20px; left: 20px; width: 100px; height: 140px; perspective: 1000px; z-index: 90; }
+        
+        /* 使用 JS class 控制翻轉，修正卡住問題 */
         .flip-card { 
             width: 100%; height: 100%; position: relative; 
-            transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1); /* 優化動畫曲線 */
-            transform-style: preserve-3d; 
-            cursor: pointer; 
+            transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+            transform-style: preserve-3d; cursor: pointer; 
         }
-        
-        /* 新增：當卡片加上 flipped 類別時，執行翻轉 */
         .flip-card.flipped { transform: rotateY(180deg); }
         
         .flip-card-front, .flip-card-back { 
             position: absolute; width: 100%; height: 100%; 
             -webkit-backface-visibility: hidden; backface-visibility: hidden; 
-            border-radius: 12px; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15); 
+            border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); 
             display: flex; align-items: center; justify-content: center; overflow: hidden; 
-            background-color: #FF9F0A; /* 預設橘色底 */
+            background-color: #FF9F0A; /* 圖片載入前底色 */
         }
         
         .flip-card-front { transform: rotateY(0deg); z-index: 2; }
-        .flip-card-back { transform: rotateY(180deg); background-color: #fff; }
+        .flip-card-back { transform: rotateY(180deg); background-color: white; }
+        
+        /* 圖片填滿 */
         .flip-card-front img, .flip-card-back img { width: 100%; height: 100%; object-fit: cover; }
         
         @media (max-width: 600px) { .flip-card-container { width: 80px; height: 110px; bottom: 10px; left: 10px; } }
     </style>
 </head>
 <body>
+
+    <audio id="bg-music" loop>
+        <source src="love-song.mp3" type="audio/mpeg">
+    </audio>
 
     <div id="lightbox" class="lightbox">
         <div class="lightbox-content">
@@ -148,10 +161,10 @@
     <div class="flip-card-container">
         <div class="flip-card" onclick="this.classList.toggle('flipped')">
             <div class="flip-card-front">
-                <img src="card-front.jpg" alt="Front">
+                <img src="card-back.jpg" alt="Front Card">
             </div>
             <div class="flip-card-back">
-                <img src="card-back.jpg" alt="Back">
+                <img src="card-front.jpg" alt="Back Card">
             </div>
         </div>
     </div>
@@ -160,6 +173,7 @@
         <div class="header">
             <h1>123 Lee's Adventure🫡</h1>
             <p>I luv you, you gut this!</p>
+            <p class="music-hint">🎵 Tap anywhere to start music</p>
         </div>
 
         <div class="widget-row">
@@ -244,6 +258,20 @@
     </div>
 
     <script>
+        // 音樂播放邏輯
+        const bgMusic = document.getElementById('bg-music');
+        let musicStarted = false;
+        function startMusic() {
+            if (!musicStarted) {
+                bgMusic.play().then(() => {
+                    musicStarted = true;
+                    document.querySelector('.music-hint').style.display = 'none';
+                }).catch(console.log);
+            }
+        }
+        document.addEventListener('click', startMusic);
+        document.addEventListener('touchstart', startMusic);
+
         const config = {
             startDate: "2025-10-21",
             endDate: "2026-01-21",
