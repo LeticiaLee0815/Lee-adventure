@@ -6,15 +6,18 @@
     <title>Lee's Adventure</title>
     <style>
         :root {
-            /* --- V14.1 修正版 (SVG人物回歸 + 簡約情侶卡片) --- */
-            --card-bg: rgba(255, 255, 255, 0.55);
+            /* --- V15.2 (白色漁夫帽經典回歸版) --- */
+            --bg-color: #FFFBF0;
+            --card-bg: rgba(255, 255, 255, 0.65);
             --card-border: rgba(255, 240, 200, 0.8);
             --primary: #007AFF; 
-            --accent: #FF9F0A;
+            --accent: #FF9F0A; /* 紅蘿蔔橘 */
             --text-main: #2c1e10;
             --text-sub: #8a7f75;
             --shadow: 0 15px 45px rgba(90, 70, 50, 0.1);
-            --glow: 0 0 35px rgba(255, 190, 60, 0.7);
+            --glow: 0 0 35px rgba(255, 190, 60, 0.6);
+            --hat-white: #ffffff; /* 經典白帽 */
+            --hat-stroke: #cccccc; /* 白帽邊框 */
         }
 
         body {
@@ -39,19 +42,8 @@
         body::after {
             content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: -1;
-            background-image: 
-                radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.5) 0%, transparent 8px),
-                radial-gradient(circle at 80% 10%, rgba(255, 220, 120, 0.4) 0%, transparent 12px),
-                radial-gradient(circle at 40% 70%, rgba(255, 255, 255, 0.4) 0%, transparent 6px);
-            background-size: 100% 100%;
-            filter: blur(2px);
-            animation: sparklingUp 25s linear infinite;
-        }
-
-        @keyframes sparklingUp {
-            0% { transform: translateY(0) scale(1); opacity: 0.7; }
-            50% { transform: translateY(-30px) scale(1.05); opacity: 1; }
-            100% { transform: translateY(-60px) scale(1); opacity: 0.7; }
+            background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.4) 0%, transparent 20px);
+            background-size: 100% 100%; filter: blur(2px);
         }
 
         .container { 
@@ -61,89 +53,71 @@
         }
 
         .header { text-align: center; margin-bottom: 10px; }
-        .header h1 { 
-            font-size: 28px; font-weight: 800; margin: 0 0 5px 0; letter-spacing: -1px;
-            color: var(--text-main);
-            text-shadow: 0 2px 15px rgba(255, 200, 100, 0.4);
-        }
-        .header p { font-size: 14px; color: var(--text-sub); margin: 0; font-weight: 500; letter-spacing: 0.5px; }
+        .header h1 { font-size: 28px; font-weight: 800; margin: 0 0 5px 0; color: var(--text-main); letter-spacing: -1px; text-shadow: 0 2px 15px rgba(255, 200, 100, 0.4); }
+        .header p { font-size: 14px; color: var(--text-sub); margin: 0; font-weight: 500; }
 
-        /* Q版人物容器 (SVG內嵌用) */
-        .avatar-box {
-            width: 85px; height: 85px; border-radius: 50%; overflow: hidden;
-            border: 4px solid rgba(255, 255, 255, 0.9);
-            box-shadow: 0 8px 20px rgba(90, 70, 50, 0.15); margin-bottom: 5px;
-            background-color: #fff; transition: transform 0.3s;
-            display: flex; justify-content: center; align-items: center;
-        }
-        .widget:hover .avatar-box { transform: scale(1.05) rotate(3deg); }
-        .avatar-svg { width: 100%; height: 100%; }
-
+        /* Widget 卡片與頭像 */
         .widget-row { display: flex; justify-content: center; width: 100%; gap: 20px; }
         .widget {
-            background: var(--card-bg);
-            backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%);
+            background: var(--card-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
             border-radius: 28px; padding: 20px 25px; 
             box-shadow: var(--shadow); border: 1px solid var(--card-border);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            position: relative; overflow: hidden; flex: 1;
-            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+            position: relative; overflow: hidden; flex: 1; transition: transform 0.3s;
         }
-        .widget:hover { transform: translateY(-8px); box-shadow: 0 25px 60px rgba(90, 70, 50, 0.2); border-color: rgba(255, 220, 120, 1); }
-        .widget-number { font-size: 48px; font-weight: 900; color: var(--text-main); line-height: 1; letter-spacing: -2px; margin-top: 5px;}
-        .widget-label { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-sub); margin-top: 5px; letter-spacing: 1px; }
+        .widget:hover { transform: translateY(-5px); box-shadow: 0 25px 60px rgba(90, 70, 50, 0.2); border-color: var(--accent); }
+        .widget-head-icon {
+            width: 70px; height: 70px; background: white; border-radius: 50%;
+            border: 3px solid rgba(255,255,255,0.8); box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 5px; overflow: hidden;
+        }
+        .widget-head-icon svg { width: 100%; height: 100%; transform: scale(1.2) translateY(5px); }
+        .widget-number { font-size: 42px; font-weight: 900; color: var(--text-main); line-height: 1; letter-spacing: -1px; margin-top: 5px;}
+        .widget-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-sub); margin-top: 5px; letter-spacing: 1px; }
 
-        /* Timeline */
-        .timeline-wrapper { width: 100%; position: relative; padding: 70px 0; }
-        .track-bg { width: 100%; height: 12px; background: rgba(200, 190, 180, 0.2); border-radius: 6px; position: relative; }
-        .track-fill { height: 100%; background: linear-gradient(90deg, #5AC8FA, #007AFF); border-radius: 6px; width: 0%; position: relative; transition: width 1s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: 0 4px 20px rgba(0, 122, 255, 0.4); }
-        .runner-box { position: absolute; right: -40px; top: -75px; width: 80px; height: 80px; transition: right 1s cubic-bezier(0.2, 0.8, 0.2, 1); z-index: 10; }
-        .runner-box svg { width: 100%; height: 100%; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.15)); animation: bobbing 0.8s infinite alternate ease-in-out; }
-        @keyframes bobbing { from { transform: translateY(0); } to { transform: translateY(-10px); } }
-        .milestone { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 16px; height: 16px; background: #FFF8E0; border: 3px solid #D0C0A0; border-radius: 50%; cursor: pointer; z-index: 5; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .milestone.passed { background: var(--primary); border-color: var(--primary); box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.2); }
-        .milestone:hover { transform: translate(-50%, -50%) scale(1.3); border-color: var(--accent); }
-        .milestone.locked { background: #E5E5EA; border-color: #C7C7CC; cursor: default; }
-        .milestone.locked::after { content: '🔒'; font-size: 10px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.6; }
-        .milestone.locked:hover { transform: translate(-50%, -50%) scale(1.2); border-color: #8E8E93; }
-        .photo-bubble { position: absolute; bottom: 45px; left: 50%; transform: translateX(-50%) scale(0.8); width: 220px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 12px; border-radius: 18px; box-shadow: 0 20px 60px rgba(90, 70, 50, 0.15); border: 1px solid var(--card-border); opacity: 0; visibility: hidden; pointer-events: none; z-index: 100; text-align: center; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .photo-bubble::after { content: ''; position: absolute; bottom: -8px; left: 50%; margin-left: -8px; border-width: 8px 8px 0; border-style: solid; border-color: rgba(255,255,255,0.9) transparent transparent transparent; }
-        .milestone:hover .photo-bubble { opacity: 1; visibility: visible; transform: translateX(-50%) scale(1); bottom: 60px; box-shadow: 0 30px 70px rgba(90, 70, 50, 0.2), var(--glow); border-color: #FFD080; }
-        .milestone.locked:hover .photo-bubble { bottom: 40px; filter: grayscale(100%); opacity: 0.9; }
-        .photo-bubble img { width: 100%; height: 140px; object-fit: cover; border-radius: 10px; margin-bottom: 8px; background-color: #f0f0f0; display: block; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-        .locked-blur { filter: blur(8px); opacity: 0.7; transform: scale(1.1); clip-path: inset(0); }
-        .photo-bubble h4 { margin: 5px 0 2px 0; font-size: 15px; font-weight: 800; color: var(--text-main); }
-        .photo-bubble span { font-size: 12px; color: var(--text-sub); display: block; margin-bottom: 5px; }
-        .click-hint { font-size: 10px; color: var(--accent); font-weight: 700; letter-spacing: 0.5px; }
-        .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(60, 50, 40, 0.3); backdrop-filter: blur(30px); display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        /* 跑道與跑者 */
+        .timeline-wrapper { width: 100%; position: relative; padding: 80px 0 40px 0; }
+        .track-bg { width: 100%; height: 14px; background: rgba(0,0,0,0.05); border-radius: 7px; position: relative; border: 2px solid white;}
+        .track-fill { height: 100%; background: linear-gradient(90deg, #FFD700, #FF9F0A); border-radius: 7px; width: 0%; position: relative; transition: width 1s linear; box-shadow: 0 2px 10px rgba(255, 159, 10, 0.4); }
+        .runner-group {
+            position: absolute; right: -35px; top: -75px; width: 80px; height: 80px; z-index: 10;
+            animation: run-bounce 0.6s infinite alternate ease-in-out;
+        }
+        @keyframes run-bounce { from { transform: translateY(0); } to { transform: translateY(-8px); } }
+
+        /* 紅蘿蔔里程碑 */
+        .milestone {
+            position: absolute; top: 50%; transform: translate(-50%, -50%);
+            width: 24px; height: 24px; cursor: pointer; z-index: 5; transition: all 0.3s ease;
+            display: flex; justify-content: center; align-items: center; font-size: 20px;
+        }
+        .milestone::before { content: '🥕'; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2)); transition: transform 0.3s; }
+        .milestone.passed::before { filter: grayscale(0); transform: scale(1.1); }
+        .milestone.locked::before { content: '🔒'; font-size: 14px; filter: grayscale(1); opacity: 0.6; }
+        .milestone:hover::before { transform: scale(1.5) rotate(10deg); }
+
+        /* 氣泡與燈箱 */
+        .photo-bubble { position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%) scale(0.8); width: 200px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); padding: 10px; border-radius: 16px; box-shadow: 0 15px 40px rgba(90, 70, 50, 0.15); border: 1px solid white; opacity: 0; visibility: hidden; pointer-events: none; z-index: 100; text-align: center; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .photo-bubble::after { content: ''; position: absolute; bottom: -8px; left: 50%; margin-left: -8px; border-width: 8px 8px 0; border-style: solid; border-color: rgba(255,255,255,0.95) transparent transparent transparent; }
+        .milestone:hover .photo-bubble { opacity: 1; visibility: visible; transform: translateX(-50%) scale(1); bottom: 45px; }
+        .photo-bubble img { width: 100%; height: 120px; object-fit: cover; border-radius: 10px; margin-bottom: 5px; background-color: #f0f0f0; }
+        .photo-bubble h4 { margin: 5px 0 2px 0; font-size: 14px; font-weight: 800; color: var(--text-main); }
+        .photo-bubble span { font-size: 11px; color: var(--text-sub); display: block; margin-bottom: 5px; }
+        .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(60, 50, 40, 0.6); backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .lightbox.active { opacity: 1; pointer-events: all; }
-        .lightbox-content { background: rgba(255, 255, 255, 0.95); padding: 20px; border-radius: 24px; max-width: 90%; text-align: center; position: relative; transform: scale(0.95); transition: transform 0.3s ease; box-shadow: 0 30px 80px rgba(0,0,0,0.2); }
+        .lightbox-content { background: white; padding: 15px; border-radius: 20px; max-width: 90%; text-align: center; transform: scale(0.95); transition: transform 0.3s ease; }
         .lightbox.active .lightbox-content { transform: scale(1); }
-        .lightbox img { max-width: 100%; max-height: 60vh; border-radius: 16px; margin: 0 auto 20px auto; display: block; }
-        .close-btn { position: absolute; top: 15px; right: 15px; font-size: 28px; cursor: pointer; opacity: 0.6; }
-        .date-labels { display: flex; justify-content: space-between; margin-top: 10px; font-size: 12px; color: var(--text-sub); font-weight: 600; width: 100%;}
+        .lightbox img { max-width: 100%; max-height: 60vh; border-radius: 12px; display: block; margin: 0 auto 10px auto; }
+        .close-btn { position: absolute; top: 15px; right: 15px; font-size: 30px; cursor: pointer; color: white; }
+        .date-labels { display: flex; justify-content: space-between; margin-top: 10px; font-size: 12px; color: var(--text-sub); font-weight: 600; }
 
-        /* --- 3D 翻轉卡片 (左下角) --- */
-        .flip-card-container {
-            position: fixed; bottom: 20px; left: 20px; width: 120px; height: 160px;
-            perspective: 1000px; z-index: 100;
-        }
-        .flip-card {
-            width: 100%; height: 100%; position: relative;
-            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-style: preserve-3d; cursor: pointer;
-        }
+        /* 左下角 3D 卡片 */
+        .flip-card-container { position: fixed; bottom: 20px; left: 20px; width: 100px; height: 140px; perspective: 1000px; z-index: 90; }
+        .flip-card { width: 100%; height: 100%; position: relative; transition: transform 0.8s; transform-style: preserve-3d; cursor: pointer; }
         .flip-card-container:hover .flip-card { transform: rotateY(180deg); }
-        .flip-card-front, .flip-card-back {
-            position: absolute; width: 100%; height: 100%;
-            -webkit-backface-visibility: hidden; backface-visibility: hidden;
-            border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            overflow: hidden; display: flex; align-items: center; justify-content: center;
-        }
-        /* 卡片正面：極簡白色線條情侶 (SVG) */
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .flip-card-front { background: linear-gradient(135deg, #FF9F0A, #FFD700); }
-        /* 卡片背面：驚喜照片 (使用假圖，請自己替換) */
-        .flip-card-back { background-color: white; transform: rotateY(180deg); }
+        .flip-card-back { background: white; transform: rotateY(180deg); }
         .flip-card-back img { width: 100%; height: 100%; object-fit: cover; }
         @media (max-width: 600px) { .flip-card-container { width: 80px; height: 110px; bottom: 10px; left: 10px; } }
     </style>
@@ -162,21 +136,25 @@
     <div class="flip-card-container">
         <div class="flip-card">
             <div class="flip-card-front">
-                <svg width="80%" height="80%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="70" cy="70" r="20" fill="none" stroke="white" stroke-width="5"/>
-                    <line x1="70" y1="90" x2="70" y2="150" stroke="white" stroke-width="5" stroke-linecap="round"/>
-                    <line x1="70" y1="150" x2="55" y2="180" stroke="white" stroke-width="5" stroke-linecap="round"/>
-                    <line x1="70" y1="150" x2="85" y2="180" stroke="white" stroke-width="5" stroke-linecap="round"/>
-                    <circle cx="130" cy="70" r="20" fill="none" stroke="white" stroke-width="5"/>
-                    <line x1="130" y1="90" x2="130" y2="150" stroke="white" stroke-width="5" stroke-linecap="round"/>
-                    <line x1="130" y1="150" x2="115" y2="180" stroke="white" stroke-width="5" stroke-linecap="round"/>
-                    <line x1="130" y1="150" x2="145" y2="180" stroke="white" stroke-width="5" stroke-linecap="round"/>
-                    <path d="M70 110 Q100 130 130 110" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
-                    <path d="M100 50 Q110 40 120 50 Q130 65 100 85 Q70 65 80 50 Q90 40 100 50 Z" fill="white"/>
+                <svg width="90%" height="90%" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M60 35 Q75 20 90 35 Q105 50 60 90 Q15 50 30 35 Q45 20 60 35 Z" fill="#ff3b30" stroke="white" stroke-width="2"/>
+                    <g transform="translate(10, 50) scale(0.7)">
+                        <circle cx="48" cy="35" r="11" fill="#f5d0c5"/>
+                        <circle cx="44" cy="36" r="3.5" stroke="#333" stroke-width="1" fill="none"/>
+                        <circle cx="52" cy="36" r="3.5" stroke="#333" stroke-width="1" fill="none"/>
+                        <path d="M38 14 L58 14 L61 26 L35 26 Z" fill="white" stroke="#ccc" stroke-width="1"/>
+                        <path d="M33 26 Q48 30 63 26" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                    </g>
+                    <g transform="translate(70, 50) scale(0.7)">
+                        <path d="M36 35 Q32 55 36 62 L60 62 Q64 55 60 35" fill="#333"/>
+                        <circle cx="48" cy="35" r="11" fill="#f5d0c5"/>
+                        <path d="M38 14 L58 14 L61 26 L35 26 Z" fill="white" stroke="#ccc" stroke-width="1"/>
+                        <path d="M33 26 Q48 30 63 26" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                    </g>
                 </svg>
             </div>
             <div class="flip-card-back">
-                <img src="https://placehold.co/200x300/FFFAF0/FF9F0A?text=Love+U" alt="Surprise Photo">
+                <img src="https://placehold.co/200x300/FFFAF0/FF9F0A?text=Love+U!" alt="Back">
             </div>
         </div>
     </div>
@@ -189,18 +167,13 @@
 
         <div class="widget-row">
             <div class="widget w-served">
-                <div class="avatar-box">
-                    <svg class="avatar-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="50" cy="55" r="35" fill="#f5d0c5"/>
-                        <path d="M15 35 L85 35 L80 15 L20 15 Z" fill="#5c6b46"/>
-                        <path d="M10 35 Q50 45 90 35" fill="none" stroke="#5c6b46" stroke-width="5"/>
-                        <circle cx="35" cy="55" r="3" fill="#333"/>
-                        <circle cx="65" cy="55" r="3" fill="#333"/>
-                        <circle cx="35" cy="55" r="10" fill="none" stroke="#333" stroke-width="2"/>
-                        <circle cx="65" cy="55" r="10" fill="none" stroke="#333" stroke-width="2"/>
-                        <line x1="45" y1="55" x2="55" y2="55" stroke="#333" stroke-width="2"/>
-                        <path d="M40 70 Q50 75 60 70" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
+                <div class="widget-head-icon">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="100" height="100" fill="#e0f7fa"/>
+                        <circle cx="50" cy="60" r="25" fill="#f5d0c5"/> <path d="M25 15 L75 15 L80 35 L20 35 Z" fill="white" stroke="#ccc" stroke-width="2"/>
+                        <path d="M15 35 Q50 45 85 35" fill="none" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                        <circle cx="40" cy="60" r="8" fill="none" stroke="#333" stroke-width="2"/> <circle cx="60" cy="60" r="8" fill="none" stroke="#333" stroke-width="2"/> <line x1="48" y1="60" x2="52" y2="60" stroke="#333" stroke-width="2"/>
+                        <path d="M45 75 Q50 80 55 75" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"/> </svg>
                 </div>
                 <div class="widget-number" id="num-served">0</div>
                 <div class="widget-label">Days Served</div>
@@ -210,8 +183,26 @@
         <div class="timeline-wrapper">
             <div class="track-bg">
                 <div class="track-fill" id="progress-bar">
-                    <div class="runner-box">
-                       <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="50" cy="90" rx="25" ry="4" fill="black" fill-opacity="0.15"/><g transform="translate(15, 10)"><path d="M40 85 L40 60 L55 60 L55 85" stroke="#1D1D1F" stroke-width="3" stroke-linecap="round"/><path d="M48 60 L48 45" stroke="#1D1D1F" stroke-width="3"/><circle cx="48" cy="35" r="11" fill="#FFD6C9"/><path d="M40 36 L56 36" stroke="#333" stroke-width="1"/><circle cx="43" cy="36" r="3.5" stroke="#333" stroke-width="1" fill="none"/><circle cx="53" cy="36" r="3.5" stroke="#333" stroke-width="1" fill="none"/><path d="M35 26 L61 26 L58 14 L38 14 Z" fill="#F2F2F7" stroke="#8E8E93" stroke-width="1"/><path d="M33 26 Q48 30 63 26" fill="none" stroke="#F2F2F7" stroke-width="4"/><path d="M44 20 C44 20 46 22 48 20 C50 22 52 20 52 20" stroke="#FFD700" stroke-width="2.5" stroke-linecap="round"/></g><g transform="translate(-15, 15)"><path d="M40 85 L40 60 L55 60 L55 85" stroke="#1D1D1F" stroke-width="3" stroke-linecap="round"/><path d="M48 60 L48 45" stroke="#1D1D1F" stroke-width="3"/><path d="M36 35 Q32 55 36 62 L60 62 Q64 55 60 35" fill="#333"/><circle cx="48" cy="35" r="11" fill="#FFE0DA"/><path d="M35 26 L61 26 L58 14 L38 14 Z" fill="#F2F2F7" stroke="#8E8E93" stroke-width="1"/><path d="M33 26 Q48 30 63 26" fill="none" stroke="#F2F2F7" stroke-width="4"/><path d="M44 20 C44 20 46 22 48 20 C50 22 52 20 52 20" stroke="#FFD700" stroke-width="2.5" stroke-linecap="round"/></g></svg>
+                    <div class="runner-group">
+                       <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <g transform="translate(-10, 10)">
+                                <path d="M40 85 L40 60 L55 60 L55 85" stroke="#1D1D1F" stroke-width="3" stroke-linecap="round"/>
+                                <path d="M48 60 L48 45" stroke="#1D1D1F" stroke-width="3"/>
+                                <circle cx="48" cy="35" r="11" fill="#f5d0c5"/>
+                                <circle cx="44" cy="36" r="3.5" stroke="#333" stroke-width="1" fill="none"/>
+                                <circle cx="52" cy="36" r="3.5" stroke="#333" stroke-width="1" fill="none"/>
+                                <path d="M38 14 L58 14 L61 26 L35 26 Z" fill="white" stroke="#ccc" stroke-width="1"/>
+                                <path d="M33 26 Q48 30 63 26" fill="none" stroke="white" stroke-width="3"/>
+                            </g>
+                            <g transform="translate(20, 15)">
+                                <path d="M40 85 L40 60 L55 60 L55 85" stroke="#1D1D1F" stroke-width="3" stroke-linecap="round"/>
+                                <path d="M48 60 L48 45" stroke="#1D1D1F" stroke-width="3"/>
+                                <path d="M36 35 Q32 55 36 62 L60 62 Q64 55 60 35" fill="#333"/>
+                                <circle cx="48" cy="35" r="11" fill="#f5d0c5"/>
+                                <path d="M38 14 L58 14 L61 26 L35 26 Z" fill="white" stroke="#ccc" stroke-width="1"/>
+                                <path d="M33 26 Q48 30 63 26" fill="none" stroke="white" stroke-width="3"/>
+                            </g>
+                        </svg>
                     </div>
                 </div>
                 <div id="milestones-layer"></div>
@@ -224,16 +215,14 @@
 
         <div class="widget-row">
             <div class="widget w-left">
-                 <div class="avatar-box">
-                    <svg class="avatar-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="50" cy="55" r="35" fill="#f5d0c5"/>
-                        <path d="M15 35 L85 35 L80 15 L20 15 Z" fill="#ff9f0a"/>
-                        <path d="M10 35 Q50 42 90 35" fill="none" stroke="#ff9f0a" stroke-width="6"/>
-                        <path d="M25 50 L45 50 L45 60 Q35 65 25 60 Z" fill="#222"/>
-                        <path d="M55 50 L75 50 L75 60 Q65 65 55 60 Z" fill="#222"/>
-                        <line x1="45" y1="52" x2="55" y2="52" stroke="#222" stroke-width="2"/>
-                        <path d="M35 72 Q50 85 65 72" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
+                 <div class="widget-head-icon">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="100" height="100" fill="#fffbe6"/>
+                        <path d="M30 50 Q25 80 35 90 L65 90 Q75 80 70 50" fill="#333"/> <circle cx="50" cy="60" r="25" fill="#f5d0c5"/> <path d="M25 15 L75 15 L80 35 L20 35 Z" fill="white" stroke="#ccc" stroke-width="2"/>
+                        <path d="M15 35 Q50 45 85 35" fill="none" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M35 58 L45 58 L45 65 Q40 68 35 65 Z" fill="#333"/> <path d="M55 58 L65 58 L65 65 Q60 68 55 65 Z" fill="#333"/>
+                        <line x1="45" y1="59" x2="55" y2="59" stroke="#333" stroke-width="2"/>
+                        <path d="M45 75 Q50 82 55 75" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"/> </svg>
                 </div>
                 <div class="widget-number" id="num-left" style="color: var(--primary);">0</div>
                 <div class="widget-label">Days Left</div>
