@@ -75,19 +75,13 @@
         .header p { font-size: 14px; color: var(--text-sub); margin: 0; font-weight: 500; letter-spacing: 0.5px; }
 
         /* Q版人物樣式修正 */
-        .avatar-container {
-            width: 80px; height: 80px; 
-            border-radius: 50%;
-            overflow: hidden;
-            border: 4px solid rgba(255, 255, 255, 0.9);
-            box-shadow: 0 8px 20px rgba(90, 70, 50, 0.15);
-            margin-bottom: 5px;
-            background-color: #fff; /* 確保背景是白的 */
-            transition: transform 0.3s;
-            display: flex; justify-content: center; align-items: center;
-        }
-        .widget:hover .avatar-container { transform: scale(1.05) rotate(3deg); }
-        .avatar-container img { width: 100%; height: 100%; }
+       .widget-q-icon {
+    width: 80px; 
+    height: 80px;
+    object-fit: contain; /* 確保整個人物顯示出來，不會被切到 */
+    margin-bottom: 5px;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); /* 加一點影子更有質感 */
+}
 
         /* Widget 卡片調整 */
         .widget-row { display: flex; justify-content: center; width: 100%; gap: 20px; }
@@ -160,7 +154,7 @@
         <div class="widget-row">
             <div class="widget w-served">
                 <div class="avatar-container">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=MilitaryLee&accessories=prescription02&skinColor=light&topType=winterHat4&clotheType=graphicShirt&clotheColor=5c6b46&graphicType=diamond" alt="Military Q-Version">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=MilitaryLee&accessories=prescription02&skinColor=light&topType=winterHat4&clotheType=graphicShirt&clotheColor=5c6b46&graphicType=diamond" class="widget-q-icon" alt="Military Q-Version">
                 </div>
                 <div class="widget-number" id="num-served">0</div>
                 <div class="widget-label">Days Served</div>
@@ -185,7 +179,7 @@
         <div class="widget-row">
             <div class="widget w-left">
                  <div class="avatar-container">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=VacationLee&accessories=sunglasses&skinColor=light&topType=hat&clotheType=shirtScoopNeck&clotheColor=ff9f0a&mouth=smile" alt="Vacation Q-Version">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=VacationLee&accessories=sunglasses&skinColor=light&topType=hat&clotheType=shirtScoopNeck&clotheColor=ff9f0a&mouth=smile" class="widget-q-icon" alt="Vacation Q-Version">
                 </div>
                 <div class="widget-number" id="num-left" style="color: var(--primary);">0</div>
                 <div class="widget-label">Days Left</div>
