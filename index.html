@@ -6,6 +6,7 @@
     <title>Lee's Adventure</title>
     <style>
         :root {
+            /* --- V14.1 修正版 (SVG人物回歸 + 簡約情侶卡片) --- */
             --card-bg: rgba(255, 255, 255, 0.55);
             --card-border: rgba(255, 240, 200, 0.8);
             --primary: #007AFF; 
@@ -67,15 +68,16 @@
         }
         .header p { font-size: 14px; color: var(--text-sub); margin: 0; font-weight: 500; letter-spacing: 0.5px; }
 
-        .avatar-container {
+        /* Q版人物容器 (SVG內嵌用) */
+        .avatar-box {
             width: 85px; height: 85px; border-radius: 50%; overflow: hidden;
             border: 4px solid rgba(255, 255, 255, 0.9);
             box-shadow: 0 8px 20px rgba(90, 70, 50, 0.15); margin-bottom: 5px;
             background-color: #fff; transition: transform 0.3s;
             display: flex; justify-content: center; align-items: center;
         }
-        .widget:hover .avatar-container { transform: scale(1.05) rotate(3deg); }
-        .avatar-container img { width: 100%; height: 100%; object-fit: cover; }
+        .widget:hover .avatar-box { transform: scale(1.05) rotate(3deg); }
+        .avatar-svg { width: 100%; height: 100%; }
 
         .widget-row { display: flex; justify-content: center; width: 100%; gap: 20px; }
         .widget {
@@ -123,66 +125,27 @@
 
         /* --- 3D 翻轉卡片 (左下角) --- */
         .flip-card-container {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 120px; /* 卡片寬度 */
-            height: 160px; /* 卡片高度 */
-            perspective: 1000px; /* 3D 透視深度 */
-            z-index: 100;
+            position: fixed; bottom: 20px; left: 20px; width: 120px; height: 160px;
+            perspective: 1000px; z-index: 100;
         }
-
         .flip-card {
-            width: 100%;
-            height: 100%;
-            position: relative;
+            width: 100%; height: 100%; position: relative;
             transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-style: preserve-3d;
-            cursor: pointer;
+            transform-style: preserve-3d; cursor: pointer;
         }
-
-        /* 滑鼠移過去時翻轉 */
-        .flip-card-container:hover .flip-card {
-            transform: rotateY(180deg);
-        }
-
+        .flip-card-container:hover .flip-card { transform: rotateY(180deg); }
         .flip-card-front, .flip-card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            -webkit-backface-visibility: hidden; /* 隱藏背面 */
-            backface-visibility: hidden;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: absolute; width: 100%; height: 100%;
+            -webkit-backface-visibility: hidden; backface-visibility: hidden;
+            border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            overflow: hidden; display: flex; align-items: center; justify-content: center;
         }
-
-        /* --- 卡片正面：我幫你畫的白色線條圖 (SVG) --- */
-        .flip-card-front {
-            /* 溫暖的漸層背景 */
-            background: linear-gradient(135deg, #FF9F0A, #FFD700);
-        }
-
-        /* --- 卡片背面：驚喜照片 (使用假圖，請自己替換) --- */
-        .flip-card-back {
-            background-color: white;
-            transform: rotateY(180deg); /* 預先轉過去 */
-        }
-        .flip-card-back img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* 隱藏在手機版 (太小會擋路) */
-        @media (max-width: 600px) {
-            .flip-card-container {
-                width: 80px; height: 110px; bottom: 10px; left: 10px;
-            }
-        }
+        /* 卡片正面：極簡白色線條情侶 (SVG) */
+        .flip-card-front { background: linear-gradient(135deg, #FF9F0A, #FFD700); }
+        /* 卡片背面：驚喜照片 (使用假圖，請自己替換) */
+        .flip-card-back { background-color: white; transform: rotateY(180deg); }
+        .flip-card-back img { width: 100%; height: 100%; object-fit: cover; }
+        @media (max-width: 600px) { .flip-card-container { width: 80px; height: 110px; bottom: 10px; left: 10px; } }
     </style>
 </head>
 <body>
@@ -200,15 +163,16 @@
         <div class="flip-card">
             <div class="flip-card-front">
                 <svg width="80%" height="80%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="70" cy="70" r="25" fill="none" stroke="white" stroke-width="6" stroke-linecap="round"/>
-                    <path d="M70 95 Q70 160 40 180" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"/>
-                    <path d="M70 120 Q50 80 100 90" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"/>
-                    
-                    <circle cx="130" cy="70" r="25" fill="none" stroke="white" stroke-width="6" stroke-linecap="round"/>
-                    <path d="M130 95 Q130 160 160 180" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"/>
-                    <path d="M130 120 Q150 80 100 90" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"/>
-                    
-                    <path d="M100 90 Q100 110 100 110" stroke="white" stroke-width="6" stroke-linecap="round"/>
+                    <circle cx="70" cy="70" r="20" fill="none" stroke="white" stroke-width="5"/>
+                    <line x1="70" y1="90" x2="70" y2="150" stroke="white" stroke-width="5" stroke-linecap="round"/>
+                    <line x1="70" y1="150" x2="55" y2="180" stroke="white" stroke-width="5" stroke-linecap="round"/>
+                    <line x1="70" y1="150" x2="85" y2="180" stroke="white" stroke-width="5" stroke-linecap="round"/>
+                    <circle cx="130" cy="70" r="20" fill="none" stroke="white" stroke-width="5"/>
+                    <line x1="130" y1="90" x2="130" y2="150" stroke="white" stroke-width="5" stroke-linecap="round"/>
+                    <line x1="130" y1="150" x2="115" y2="180" stroke="white" stroke-width="5" stroke-linecap="round"/>
+                    <line x1="130" y1="150" x2="145" y2="180" stroke="white" stroke-width="5" stroke-linecap="round"/>
+                    <path d="M70 110 Q100 130 130 110" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
+                    <path d="M100 50 Q110 40 120 50 Q130 65 100 85 Q70 65 80 50 Q90 40 100 50 Z" fill="white"/>
                 </svg>
             </div>
             <div class="flip-card-back">
@@ -225,8 +189,18 @@
 
         <div class="widget-row">
             <div class="widget w-served">
-                <div class="avatar-container">
-                    <img src="https://api.dicebear.com/9.x/avataaars/png?seed=MilitaryLee&accessories=prescription02&skinColor=f5d0c5&topType=winterHat4&clotheType=graphicShirt&clotheColor=5c6b46&graphicType=diamond" class="widget-q-icon" alt="Military Q-Version">
+                <div class="avatar-box">
+                    <svg class="avatar-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="55" r="35" fill="#f5d0c5"/>
+                        <path d="M15 35 L85 35 L80 15 L20 15 Z" fill="#5c6b46"/>
+                        <path d="M10 35 Q50 45 90 35" fill="none" stroke="#5c6b46" stroke-width="5"/>
+                        <circle cx="35" cy="55" r="3" fill="#333"/>
+                        <circle cx="65" cy="55" r="3" fill="#333"/>
+                        <circle cx="35" cy="55" r="10" fill="none" stroke="#333" stroke-width="2"/>
+                        <circle cx="65" cy="55" r="10" fill="none" stroke="#333" stroke-width="2"/>
+                        <line x1="45" y1="55" x2="55" y2="55" stroke="#333" stroke-width="2"/>
+                        <path d="M40 70 Q50 75 60 70" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
                 </div>
                 <div class="widget-number" id="num-served">0</div>
                 <div class="widget-label">Days Served</div>
@@ -250,8 +224,16 @@
 
         <div class="widget-row">
             <div class="widget w-left">
-                 <div class="avatar-container">
-                    <img src="https://api.dicebear.com/9.x/avataaars/png?seed=VacationLee&accessories=sunglasses&skinColor=f5d0c5&topType=hat&clotheType=shirtScoopNeck&clotheColor=ff9f0a&mouth=smile" class="widget-q-icon" alt="Vacation Q-Version">
+                 <div class="avatar-box">
+                    <svg class="avatar-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="55" r="35" fill="#f5d0c5"/>
+                        <path d="M15 35 L85 35 L80 15 L20 15 Z" fill="#ff9f0a"/>
+                        <path d="M10 35 Q50 42 90 35" fill="none" stroke="#ff9f0a" stroke-width="6"/>
+                        <path d="M25 50 L45 50 L45 60 Q35 65 25 60 Z" fill="#222"/>
+                        <path d="M55 50 L75 50 L75 60 Q65 65 55 60 Z" fill="#222"/>
+                        <line x1="45" y1="52" x2="55" y2="52" stroke="#222" stroke-width="2"/>
+                        <path d="M35 72 Q50 85 65 72" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
                 </div>
                 <div class="widget-number" id="num-left" style="color: var(--primary);">0</div>
                 <div class="widget-label">Days Left</div>
