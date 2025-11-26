@@ -6,7 +6,7 @@
     <title>Lee's Adventure</title>
     <style>
         :root {
-            /* --- V20.0 甜蜜喊話版 --- */
+            /* --- V21.0 手機完美適配版 --- */
             --bg-color: #FFFBF0;
             --card-bg: rgba(255, 255, 255, 0.65);
             --card-border: rgba(255, 240, 200, 0.8);
@@ -16,9 +16,6 @@
             --text-sub: #8a7f75;
             --shadow: 0 8px 20px rgba(90, 70, 50, 0.08);
             --glow: 0 0 35px rgba(255, 190, 60, 0.6);
-            --wave-front: #FF9F80; 
-            --wave-mid: #FFC9A0;   
-            --wave-back: #FFEDCC; 
         }
 
         body {
@@ -30,6 +27,8 @@
             overflow-x: hidden; position: relative;
             background-color: #FFFBF0;
             background-image: radial-gradient(circle at 50% 0%, #FFE0B2 10%, #FFFBF0 65%);
+            /* 手機版增加底部留白，避免被固定元素擋住 */
+            padding-bottom: 120px; 
         }
 
         /* 頂層閃爍光點 */
@@ -115,21 +114,16 @@
         .flip-card-back { transform: rotateY(180deg); background-color: white; }
         .flip-card-front img, .flip-card-back img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- 黑膠音樂播放器 (V20.0 大幅放大版) --- */
+        /* 黑膠音樂播放器 (懸停放大) */
         .music-trigger {
             position: fixed; bottom: 30px; right: 20px;
             width: 120px; height: 120px;
             z-index: 80; cursor: pointer;
             transition: transform 0.3s ease;
             animation: floating 4s ease-in-out infinite;
-            transform-origin: bottom right; /* 確保放大時往左上長，不會被切掉 */
+            transform-origin: bottom right;
         }
-        /* 懸停時放大 1.6 倍 */
-        .music-trigger:hover {
-            animation-play-state: paused;
-            transform: scale(1.6) rotate(0deg) !important; 
-        }
-
+        .music-trigger:hover { animation-play-state: paused; transform: scale(1.6) rotate(0deg) !important; }
         @keyframes floating { 0% { transform: translateY(0px) rotate(3deg); } 50% { transform: translateY(-15px) rotate(-3deg); } 100% { transform: translateY(0px) rotate(3deg); } }
         .vinyl-group { transform-origin: 60px 35px; transition: transform 0.5s; }
         .music-trigger.playing .vinyl-group { animation: spin 3s linear infinite; }
@@ -171,9 +165,31 @@
         .confetti { position: absolute; width: 10px; height: 10px; background-color: #f00; animation: fall linear forwards; }
         @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
 
+        /* --- 手機版專屬調整 (Mobile Media Query) --- */
         @media (max-width: 600px) { 
-            .flip-card-container { width: 80px; height: 110px; bottom: 10px; left: 10px; } 
-            .music-trigger { width: 100px; height: 100px; bottom: 20px; right: 10px; }
+            /* 調整標題大小 */
+            .header h1 { font-size: 22px; }
+            
+            /* 調整 Widget 大小 */
+            .widget { padding: 8px 15px; min-width: 140px; gap: 10px; }
+            .widget-head-icon { width: 40px; height: 40px; }
+            .widget-number { font-size: 24px; }
+            .widget-label { font-size: 9px; }
+            
+            /* 調整時間軸高度與跑者位置 */
+            .timeline-wrapper { padding: 60px 0 20px 0; }
+            .runner-box { width: 60px; height: 60px; top: -55px; right: -30px; }
+            
+            /* 調整左下角翻轉卡片大小 */
+            .flip-card-container { width: 70px; height: 100px; bottom: 20px; left: 15px; }
+            
+            /* 調整右下角黑膠大小 */
+            .music-trigger { width: 80px; height: 80px; bottom: 20px; right: 10px; }
+            .vinyl-group circle:nth-child(1) { r: 25; } /* 縮小唱片半徑 */
+            .vinyl-group { transform-origin: 50px 30px; } /* 調整旋轉中心 */
+            
+            /* 調整海浪高度，避免佔據太多螢幕 */
+            .waves-container { height: 25vh; }
         }
     </style>
 </head>
@@ -354,23 +370,32 @@
             }
         }
 
+        // --- 加油打氣功能 ---
         function showCheer(type) {
             const overlay = document.getElementById('cheer-overlay');
             const img = document.getElementById('cheer-img');
             const text = document.getElementById('cheer-text');
             
             if (type === 'served') {
+                // 如果你有上傳圖片，這裡就會顯示
+                // 暫時先用 SVG 小人當替身，你可以上傳 cheer-served.jpg
                 img.src = "cheer-served.jpg"; 
-                img.onerror = function() { this.src = "data:image/svg+xml;utf8,<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='%23e0f7fa'/><circle cx='50' cy='60' r='25' fill='%23f5d0c5'/><path d='M35 26 L61 26 L58 14 L38 14 Z' fill='%23F2F2F7' stroke='%238E8E93' stroke-width='1' transform='scale(1.8) translate(-22, 0)'/><path d='M33 26 Q48 30 63 26' fill='none' stroke='%23F2F2F7' stroke-width='4' transform='scale(1.8) translate(-22, 0)'/><circle cx='40' cy='60' r='8' fill='none' stroke='%23333' stroke-width='2'/><circle cx='60' cy='60' r='8' fill='none' stroke='%23333' stroke-width='2'/><line x1='48' y1='60' x2='52' y2='60' stroke='%23333' stroke-width='2'/><path d='M45 75 Q50 80 55 75' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round'/></svg>"; };
+                img.onerror = function() { 
+                    // 如果找不到圖片，使用男生 SVG 
+                    this.src = "data:image/svg+xml;utf8,<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='%23e0f7fa'/><circle cx='50' cy='60' r='25' fill='%23f5d0c5'/><path d='M35 26 L61 26 L58 14 L38 14 Z' fill='%23F2F2F7' stroke='%238E8E93' stroke-width='1' transform='scale(1.8) translate(-22, 0)'/><path d='M33 26 Q48 30 63 26' fill='none' stroke='%23F2F2F7' stroke-width='4' transform='scale(1.8) translate(-22, 0)'/><circle cx='40' cy='60' r='8' fill='none' stroke='%23333' stroke-width='2'/><circle cx='60' cy='60' r='8' fill='none' stroke='%23333' stroke-width='2'/><line x1='48' y1='60' x2='52' y2='60' stroke='%23333' stroke-width='2'/><path d='M45 75 Q50 80 55 75' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round'/></svg>"; 
+                };
                 text.innerHTML = "報告!我最喜歡你🫡❤️";
             } else {
                 img.src = "cheer-left.jpg";
-                img.onerror = function() { this.src = "data:image/svg+xml;utf8,<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='%23fffbe6'/><path d='M30 50 Q25 80 35 90 L65 90 Q75 80 70 50' fill='%23333'/><circle cx='50' cy='60' r='25' fill='%23f5d0c5'/><path d='M35 26 L61 26 L58 14 L38 14 Z' fill='%23F2F2F7' stroke='%238E8E93' stroke-width='1' transform='scale(1.8) translate(-22, 0)'/><path d='M33 26 Q48 30 63 26' fill='none' stroke='%23F2F2F7' stroke-width='4' transform='scale(1.8) translate(-22, 0)'/><path d='M35 58 L45 58 L45 65 Q40 68 35 65 Z' fill='%23333'/><path d='M55 58 L65 58 L65 65 Q60 68 55 65 Z' fill='%23333'/><line x1='45' y1='59' x2='55' y2='59' stroke='%23333' stroke-width='2'/><path d='M45 75 Q50 82 55 75' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round'/></svg>"; };
+                img.onerror = function() {
+                    // 如果找不到圖片，使用女生 SVG
+                    this.src = "data:image/svg+xml;utf8,<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='%23fffbe6'/><path d='M30 50 Q25 80 35 90 L65 90 Q75 80 70 50' fill='%23333'/><circle cx='50' cy='60' r='25' fill='%23f5d0c5'/><path d='M35 26 L61 26 L58 14 L38 14 Z' fill='%23F2F2F7' stroke='%238E8E93' stroke-width='1' transform='scale(1.8) translate(-22, 0)'/><path d='M33 26 Q48 30 63 26' fill='none' stroke='%23F2F2F7' stroke-width='4' transform='scale(1.8) translate(-22, 0)'/><path d='M35 58 L45 58 L45 65 Q40 68 35 65 Z' fill='%23333'/><path d='M55 58 L65 58 L65 65 Q60 68 55 65 Z' fill='%23333'/><line x1='45' y1='59' x2='55' y2='59' stroke='%23333' stroke-width='2'/><path d='M45 75 Q50 82 55 75' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round'/></svg>";
+                }
                 text.innerHTML = "123 456 你好棒喔🤩😍";
             }
             
             overlay.classList.add('active');
-            fireConfetti(); 
+            fireConfetti(); // 發射彩帶
         }
 
         function closeCheer() {
