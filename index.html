@@ -6,7 +6,7 @@
     <title>Lee's Adventure</title>
     <style>
         :root {
-            /* --- V21.0 手機完美適配版 --- */
+            /* --- V18.3 黑膠彈珠版 --- */
             --bg-color: #FFFBF0;
             --card-bg: rgba(255, 255, 255, 0.65);
             --card-border: rgba(255, 240, 200, 0.8);
@@ -27,8 +27,6 @@
             overflow-x: hidden; position: relative;
             background-color: #FFFBF0;
             background-image: radial-gradient(circle at 50% 0%, #FFE0B2 10%, #FFFBF0 65%);
-            /* 手機版增加底部留白，避免被固定元素擋住 */
-            padding-bottom: 120px; 
         }
 
         /* 頂層閃爍光點 */
@@ -89,7 +87,7 @@
         .milestone.locked::before { content: '🔒'; font-size: 14px; filter: grayscale(1); opacity: 0.6; }
         .milestone:hover::before { transform: scale(1.5) rotate(10deg); }
 
-        /* 氣泡 */
+        /* 氣泡與燈箱 */
         .photo-bubble { position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%) scale(0.8); width: 200px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); padding: 10px; border-radius: 16px; box-shadow: 0 15px 40px rgba(90, 70, 50, 0.15); border: 1px solid white; opacity: 0; visibility: hidden; pointer-events: none; z-index: 100; text-align: center; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .photo-bubble::after { content: ''; position: absolute; bottom: -8px; left: 50%; margin-left: -8px; border-width: 8px 8px 0; border-style: solid; border-color: rgba(255,255,255,0.95) transparent transparent transparent; }
         .milestone:hover .photo-bubble { opacity: 1; visibility: visible; transform: translateX(-50%) scale(1); bottom: 45px; }
@@ -104,7 +102,7 @@
         .close-btn { position: absolute; top: 15px; right: 15px; font-size: 30px; cursor: pointer; color: white; }
         .date-labels { display: flex; justify-content: space-between; margin-top: 10px; font-size: 12px; color: var(--text-sub); font-weight: 600; }
 
-        /* 3D 翻轉卡片 */
+        /* 左下角 3D 卡片 */
         .flip-card-container { position: fixed; bottom: 20px; left: 20px; width: 100px; height: 140px; perspective: 1000px; z-index: 90; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-origin: bottom left; }
         .flip-card-container:hover { transform: scale(3); }
         .flip-card { width: 100%; height: 100%; position: relative; transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1); transform-style: preserve-3d; cursor: pointer; }
@@ -114,20 +112,28 @@
         .flip-card-back { transform: rotateY(180deg); background-color: white; }
         .flip-card-front img, .flip-card-back img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* 黑膠音樂播放器 (懸停放大) */
+        /* --- 黑膠音樂播放器 (右下角 - 物理反彈版) --- */
         .music-trigger {
             position: fixed; bottom: 30px; right: 20px;
             width: 120px; height: 120px;
             z-index: 80; cursor: pointer;
-            transition: transform 0.3s ease;
+            /* 預設動畫：原地漂浮 */
             animation: floating 4s ease-in-out infinite;
-            transform-origin: bottom right;
+            /* 當切換到JS控制時，這裡的動畫會被移除 */
         }
-        .music-trigger:hover { animation-play-state: paused; transform: scale(1.6) rotate(0deg) !important; }
+        /* 正在反彈時，移除 CSS 動畫，改由 JS 控制 */
+        .music-trigger.bouncing {
+            animation: none; 
+            transition: none; /* 移除過渡，讓 JS 移動更即時 */
+        }
+
         @keyframes floating { 0% { transform: translateY(0px) rotate(3deg); } 50% { transform: translateY(-15px) rotate(-3deg); } 100% { transform: translateY(0px) rotate(3deg); } }
+        
         .vinyl-group { transform-origin: 60px 35px; transition: transform 0.5s; }
+        /* 只有在播放時才旋轉 */
         .music-trigger.playing .vinyl-group { animation: spin 3s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
+        
         .music-label { position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.8); padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; color: var(--primary); white-space: nowrap; pointer-events: none; }
 
         /* 海浪 */
@@ -165,31 +171,9 @@
         .confetti { position: absolute; width: 10px; height: 10px; background-color: #f00; animation: fall linear forwards; }
         @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
 
-        /* --- 手機版專屬調整 (Mobile Media Query) --- */
         @media (max-width: 600px) { 
-            /* 調整標題大小 */
-            .header h1 { font-size: 22px; }
-            
-            /* 調整 Widget 大小 */
-            .widget { padding: 8px 15px; min-width: 140px; gap: 10px; }
-            .widget-head-icon { width: 40px; height: 40px; }
-            .widget-number { font-size: 24px; }
-            .widget-label { font-size: 9px; }
-            
-            /* 調整時間軸高度與跑者位置 */
-            .timeline-wrapper { padding: 60px 0 20px 0; }
-            .runner-box { width: 60px; height: 60px; top: -55px; right: -30px; }
-            
-            /* 調整左下角翻轉卡片大小 */
-            .flip-card-container { width: 70px; height: 100px; bottom: 20px; left: 15px; }
-            
-            /* 調整右下角黑膠大小 */
-            .music-trigger { width: 80px; height: 80px; bottom: 20px; right: 10px; }
-            .vinyl-group circle:nth-child(1) { r: 25; } /* 縮小唱片半徑 */
-            .vinyl-group { transform-origin: 50px 30px; } /* 調整旋轉中心 */
-            
-            /* 調整海浪高度，避免佔據太多螢幕 */
-            .waves-container { height: 25vh; }
+            .flip-card-container { width: 80px; height: 110px; bottom: 10px; left: 10px; } 
+            .music-trigger { width: 100px; height: 100px; bottom: 20px; right: 10px; }
         }
     </style>
 </head>
@@ -231,7 +215,7 @@
         </div>
     </div>
 
-    <div class="music-trigger" id="musicBtn" onclick="toggleMusic()">
+    <div class="music-trigger" id="musicBtn">
         <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" filter="drop-shadow(0 5px 10px rgba(0,0,0,0.2))">
             <g class="vinyl-group">
                 <circle cx="60" cy="35" r="30" fill="#1a1a1a" stroke="#333" stroke-width="1"/>
@@ -350,10 +334,63 @@
     </div>
 
     <script>
+        // --- 音樂與物理反彈邏輯 ---
         const bgMusic = document.getElementById('bg-music');
         const musicBtn = document.getElementById('musicBtn');
         const musicLabel = document.querySelector('.music-label');
         let isPlaying = false;
+        let animationFrameId;
+        
+        // 物理變數
+        let posX, posY;
+        let velX = 1.5, velY = -1.5; // 初始速度
+        const iconSize = 100; // 預估寬度 (CSS 設 120px, 這裡用稍小值確保碰撞感)
+
+        function initBounce() {
+            // 取得目前按鈕位置，作為動畫起點
+            const rect = musicBtn.getBoundingClientRect();
+            posX = rect.left;
+            posY = rect.top;
+            
+            // 改成 absolute/fixed 定位來移動
+            musicBtn.style.bottom = 'auto';
+            musicBtn.style.right = 'auto';
+            musicBtn.style.left = '0';
+            musicBtn.style.top = '0';
+            musicBtn.style.transform = `translate(${posX}px, ${posY}px)`;
+            
+            musicBtn.classList.add('bouncing'); // 移除 CSS 動畫，交給 JS
+            updateBounce();
+        }
+
+        function updateBounce() {
+            if (!isPlaying) return; // 停止播放就不動
+
+            // 邊界檢查與反彈
+            if (posX + 120 >= window.innerWidth || posX <= 0) {
+                velX = -velX;
+            }
+            if (posY + 120 >= window.innerHeight || posY <= 0) {
+                velY = -velY;
+            }
+
+            posX += velX;
+            posY += velY;
+
+            musicBtn.style.transform = `translate(${posX}px, ${posY}px)`;
+            animationFrameId = requestAnimationFrame(updateBounce);
+        }
+
+        function resetPosition() {
+            cancelAnimationFrame(animationFrameId);
+            musicBtn.classList.remove('bouncing');
+            // 恢復 CSS 預設位置
+            musicBtn.style.left = '';
+            musicBtn.style.top = '';
+            musicBtn.style.bottom = '30px';
+            musicBtn.style.right = '20px';
+            musicBtn.style.transform = ''; // 清除 JS transform
+        }
 
         function toggleMusic() {
             if (isPlaying) {
@@ -361,41 +398,35 @@
                 musicBtn.classList.remove('playing');
                 musicLabel.innerText = "Tap to Play";
                 isPlaying = false;
+                resetPosition(); // 歸位
             } else {
                 bgMusic.play().then(() => {
                     musicBtn.classList.add('playing');
                     musicLabel.innerText = "Playing...";
                     isPlaying = true;
+                    initBounce(); // 開始亂跑
                 }).catch(err => console.log("Audio play failed:", err));
             }
         }
 
-        // --- 加油打氣功能 ---
+        // ... (其他 JS 維持不變) ...
         function showCheer(type) {
             const overlay = document.getElementById('cheer-overlay');
             const img = document.getElementById('cheer-img');
             const text = document.getElementById('cheer-text');
             
             if (type === 'served') {
-                // 如果你有上傳圖片，這裡就會顯示
-                // 暫時先用 SVG 小人當替身，你可以上傳 cheer-served.jpg
                 img.src = "cheer-served.jpg"; 
-                img.onerror = function() { 
-                    // 如果找不到圖片，使用男生 SVG 
-                    this.src = "data:image/svg+xml;utf8,<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='%23e0f7fa'/><circle cx='50' cy='60' r='25' fill='%23f5d0c5'/><path d='M35 26 L61 26 L58 14 L38 14 Z' fill='%23F2F2F7' stroke='%238E8E93' stroke-width='1' transform='scale(1.8) translate(-22, 0)'/><path d='M33 26 Q48 30 63 26' fill='none' stroke='%23F2F2F7' stroke-width='4' transform='scale(1.8) translate(-22, 0)'/><circle cx='40' cy='60' r='8' fill='none' stroke='%23333' stroke-width='2'/><circle cx='60' cy='60' r='8' fill='none' stroke='%23333' stroke-width='2'/><line x1='48' y1='60' x2='52' y2='60' stroke='%23333' stroke-width='2'/><path d='M45 75 Q50 80 55 75' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round'/></svg>"; 
-                };
+                img.onerror = function() { this.src = "data:image/svg+xml;utf8,<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='%23e0f7fa'/><circle cx='50' cy='60' r='25' fill='%23f5d0c5'/><path d='M35 26 L61 26 L58 14 L38 14 Z' fill='%23F2F2F7' stroke='%238E8E93' stroke-width='1' transform='scale(1.8) translate(-22, 0)'/><path d='M33 26 Q48 30 63 26' fill='none' stroke='%23F2F2F7' stroke-width='4' transform='scale(1.8) translate(-22, 0)'/><circle cx='40' cy='60' r='8' fill='none' stroke='%23333' stroke-width='2'/><circle cx='60' cy='60' r='8' fill='none' stroke='%23333' stroke-width='2'/><line x1='48' y1='60' x2='52' y2='60' stroke='%23333' stroke-width='2'/><path d='M45 75 Q50 80 55 75' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round'/></svg>"; };
                 text.innerHTML = "報告!我最喜歡你🫡❤️";
             } else {
                 img.src = "cheer-left.jpg";
-                img.onerror = function() {
-                    // 如果找不到圖片，使用女生 SVG
-                    this.src = "data:image/svg+xml;utf8,<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='%23fffbe6'/><path d='M30 50 Q25 80 35 90 L65 90 Q75 80 70 50' fill='%23333'/><circle cx='50' cy='60' r='25' fill='%23f5d0c5'/><path d='M35 26 L61 26 L58 14 L38 14 Z' fill='%23F2F2F7' stroke='%238E8E93' stroke-width='1' transform='scale(1.8) translate(-22, 0)'/><path d='M33 26 Q48 30 63 26' fill='none' stroke='%23F2F2F7' stroke-width='4' transform='scale(1.8) translate(-22, 0)'/><path d='M35 58 L45 58 L45 65 Q40 68 35 65 Z' fill='%23333'/><path d='M55 58 L65 58 L65 65 Q60 68 55 65 Z' fill='%23333'/><line x1='45' y1='59' x2='55' y2='59' stroke='%23333' stroke-width='2'/><path d='M45 75 Q50 82 55 75' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round'/></svg>";
-                }
+                img.onerror = function() { this.src = "data:image/svg+xml;utf8,<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='%23fffbe6'/><path d='M30 50 Q25 80 35 90 L65 90 Q75 80 70 50' fill='%23333'/><circle cx='50' cy='60' r='25' fill='%23f5d0c5'/><path d='M35 26 L61 26 L58 14 L38 14 Z' fill='%23F2F2F7' stroke='%238E8E93' stroke-width='1' transform='scale(1.8) translate(-22, 0)'/><path d='M33 26 Q48 30 63 26' fill='none' stroke='%23F2F2F7' stroke-width='4' transform='scale(1.8) translate(-22, 0)'/><path d='M35 58 L45 58 L45 65 Q40 68 35 65 Z' fill='%23333'/><path d='M55 58 L65 58 L65 65 Q60 68 55 65 Z' fill='%23333'/><line x1='45' y1='59' x2='55' y2='59' stroke='%23333' stroke-width='2'/><path d='M45 75 Q50 82 55 75' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round'/></svg>"; };
                 text.innerHTML = "123 456 你好棒喔🤩😍";
             }
             
             overlay.classList.add('active');
-            fireConfetti(); // 發射彩帶
+            fireConfetti();
         }
 
         function closeCheer() {
